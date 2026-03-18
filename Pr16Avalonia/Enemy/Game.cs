@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pr16Avalonia.Pages;
+using WpfLikeAvaloniaNavigation;
 
 namespace _3ISIP323_Zevakin.Новая_папка
 {
@@ -231,6 +233,7 @@ namespace _3ISIP323_Zevakin.Новая_папка
                 OnEnableButtons?.Invoke(false);
                 OnEnableNextButton?.Invoke(false);
                 OnGameOver?.Invoke();
+                
                 return;
             }
 

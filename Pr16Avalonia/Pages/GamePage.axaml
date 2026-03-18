@@ -1,8 +1,233 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Pr16Avalonia.Pages.GamePage">
-    Welcome to Avalonia!
-</UserControl>
+<nav:Page xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:nav="clr-namespace:WpfLikeAvaloniaNavigation;assembly=WpfLikeAvaloniaNavigation"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpfLikeAvaloniaNavigation="clr-namespace:WpfLikeAvaloniaNavigation;assembly=WpfLikeAvaloniaNavigation"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Pr16Avalonia.Pages.GamePage"
+        >
+     <nav:Page.Styles>
+        <Style Selector="Border.panel">
+            <Setter Property="Background" Value="#1a1a1a"/>
+            <Setter Property="BorderBrush" Value="#3a3a3a"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+        </Style>
+        
+        <Style Selector="TextBlock.header">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#b0b0b0"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+        </Style>
+        
+        <Style Selector="TextBlock.value">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#00ff88"/>
+        </Style>
+        
+        <Style Selector="Button.action">
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderBrush" Value="#3a3a3a"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.action:pointerover">
+            <Setter Property="Background" Value="#3a3a3a"/>
+            <Setter Property="BorderBrush" Value="#00ff88"/>
+        </Style>
+        
+        <Style Selector="Button.action:pressed">
+            <Setter Property="Background" Value="#1a1a1a"/>
+        </Style>
+    </nav:Page.Styles>
+    
+    <Border Background="#0d0d0d" Padding="20">
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- Верхняя панель: Название игры -->
+            <Border Grid.Row="0" 
+                    Classes="panel"
+                    Background="#252525"
+                    Margin="0,0,0,15">
+                <TextBlock Classes="header" 
+                           Text="Подземелье"/>
+            </Border>
+            
+            <!-- Средняя часть: Этаж, Здоровье и Игра -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,*" Margin="0,0,0,15">
+                
+                <!-- Панель статуса: Этаж и Здоровье -->
+                <Border Grid.Row="0" 
+                        Classes="panel"
+                        Margin="0,0,0,15">
+                    <Grid ColumnDefinitions="*,*">
+                        <!-- Этаж -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock Classes="label" Text="Этаж"/>
+                            <TextBlock Classes="value" Text="1" x:Name="FloorText"/>
+                        </StackPanel>
+                        
+                        <!-- Здоровье -->
+                        <StackPanel Grid.Column="1" 
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+                            <TextBlock Classes="label" Text="Здоровье"/>
+                            <TextBlock Classes="value" Text="100/100" x:Name="HealthText"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                
+                <!-- Основная область игры С КАРТИНКОЙ -->
+                <Border Grid.Row="1" 
+                        Classes="panel"
+                        Background="#1a1a1a">
+                    <Grid>
+                        <!-- Кнопка "Начать игру" -->
+                        <Button Content="Начать игру"
+                                x:Name="StartGameButton"
+                                Click="StartButton_Click"
+                                Width="200"
+                                Height="60"
+                                FontSize="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="#00ff88"
+                                Foreground="#0d0d0d"
+                                BorderThickness="0"
+                                CornerRadius="8"
+                                FontWeight="Bold"
+                                Cursor="Hand"/>
+                        
+                        <!-- *** КАРТИНКА ИГРЫ *** -->
+                        <Image x:Name="GameImage"
+                               Stretch="Uniform"
+                               MaxWidth="400"
+                               MaxHeight="400"
+                               IsVisible="False"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            
+            <!-- Нижняя панель: Инвентарь и Логирование -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="15">
+                
+                <!-- Инвентарь -->
+                <Border Grid.Column="0" Classes="panel">
+                    <StackPanel>
+                        <TextBlock Text="Инвентарь" 
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#e0e0e0"
+                                   Margin="0,0,0,10"/>
+                        <TextBlock Text="Место, где показываются&#x0a;вещи игрока"
+                                   FontSize="14"
+                                   Foreground="#808080"
+                                   TextWrapping="Wrap"/>
+                        
+                        <!-- Пример слотов инвентаря -->
+                        <UniformGrid Rows="2" Columns="4" 
+                                     Margin="0,15,0,0"
+                                     x:Name="InventoryGrid">
+                            <!-- Заполняется программно -->
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Логирование с кнопками -->
+                <Border Grid.Column="1" Classes="panel">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <!-- Заголовок -->
+                        <TextBlock Grid.Row="0"
+                                   Text="Логирование" 
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#e0e0e0"
+                                   Margin="0,0,0,10"/>
+                        
+                        <!-- Лог сообщений -->
+                        <ScrollViewer Grid.Row="1"
+                                      Height="120" 
+                                      VerticalScrollBarVisibility="Auto"
+                                      Margin="0,0,0,10">
+                            <TextBlock x:Name="LogText"
+                                       Text="Добро пожаловать в подземелье!&#x0a;Нажмите 'Начать игру' для старта..."
+                                       FontSize="13"
+                                       Foreground="#909090"
+                                       TextWrapping="Wrap"
+                                       LineHeight="20"/>
+                        </ScrollViewer>
+                        
+                        <!-- Кнопки управления (бой) -->
+                        <StackPanel Grid.Row="2" 
+                                    x:Name="BattleButtons"
+                                    Orientation="Horizontal" 
+                                    Spacing="10"
+                                    HorizontalAlignment="Center"
+                                    IsVisible="True">
+                            <Button Classes="action"
+                                    Content="⚔️ Атака"
+                                    x:Name="AttackButton"
+                                    Click="AttackButton_Click"
+                                    IsEnabled="False"/>
+                            <Button Classes="action"
+                                    Content="🛡️ Защита"
+                                    x:Name="DefendButton"
+                                    Click="DefendButton_Click"
+                                    IsEnabled="False"/>
+                            <Button Classes="action"
+                                    Content="▶️ Далее"
+                                    x:Name="NextButton"
+                                    Click="NextButton_Click"
+                                    IsEnabled="False"/>
+                        </StackPanel>
+                        
+                        <!-- Кнопки экипировки -->
+                        <StackPanel Grid.Row="2" 
+                                    x:Name="EquipButtons"
+                                    Orientation="Horizontal" 
+                                    Spacing="10"
+                                    HorizontalAlignment="Center"
+                                    IsVisible="False">
+                            <Button Classes="action"
+                                    Content="✅ Взять"
+                                    x:Name="TakeEquipButton"
+                                    Click="TakeEquipButton_Click"/>
+                            <Button Classes="action"
+                                    Content="❌ Оставить"
+                                    x:Name="KeepEquipButton"
+                                    Click="KeepEquipButton_Click"/>
+                        </StackPanel>
+                        
+                        <!-- Кнопка перезапуска -->
+                        <Button Grid.Row="2"
+                                Classes="action"
+                                Content="🔄 Новая игра"
+                                x:Name="RestartButton"
+                                Click="RestartButton_Click"
+                                IsEnabled="False"
+                                IsVisible="False"
+                                HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</nav:Page>

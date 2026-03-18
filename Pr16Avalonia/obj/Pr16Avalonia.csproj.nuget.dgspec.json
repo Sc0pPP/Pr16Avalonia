@@ -69,6 +69,10 @@
             "Avalonia.Themes.Fluent": {
               "target": "Package",
               "version": "[11.3.11, )"
+            },
+            "WpfLikeAvaloniaNavigation": {
+              "target": "Package",
+              "version": "[1.0.2.1, )"
             }
           },
           "imports": [

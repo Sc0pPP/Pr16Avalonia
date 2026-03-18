@@ -1,8 +1,139 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<nav:Page xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:nav="clr-namespace:WpfLikeAvaloniaNavigation;assembly=WpfLikeAvaloniaNavigation"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Pr16Avalonia.Pages.FirstPage">
-    Welcome to Avalonia!
-</UserControl>
+    <nav:Page.Styles>
+        <Style Selector="Button.menu-button">
+            <Setter Property="Background" Value="#2a2a2a"/>
+            <Setter Property="Foreground" Value="#e0e0e0"/>
+            <Setter Property="BorderBrush" Value="#00ff88"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="30,15"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        
+        <Style Selector="Button.menu-button:pointerover">
+            <Setter Property="Background" Value="#00ff88"/>
+            <Setter Property="Foreground" Value="#0d0d0d"/>
+            <Setter Property="BorderBrush" Value="#00ff88"/>
+        </Style>
+        
+        <Style Selector="Button.menu-button:pressed">
+            <Setter Property="Background" Value="#00cc70"/>
+        </Style>
+        
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="64"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#00ff88"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="#808080"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+    </nav:Page.Styles>
+    
+    <Border Background="#0d0d0d">
+        <Grid RowDefinitions="*,Auto,Auto,*">
+            
+            <!-- Верхняя часть с названием -->
+            <StackPanel Grid.Row="1" 
+                        VerticalAlignment="Center"
+                        Margin="0,0,0,60">
+                <TextBlock Classes="title" 
+                           Text="ПОДЗЕМЕЛЬЕ"/>
+                <TextBlock Classes="subtitle" 
+                           Text="Приключенческая RPG"/>
+            </StackPanel>
+            
+            <!-- Меню кнопок -->
+            <StackPanel Grid.Row="2" 
+                        Spacing="20"
+                        HorizontalAlignment="Center">
+                
+                <!-- Новая игра -->
+                <Button Classes="menu-button"
+                        x:Name="NewGameButton"
+                        Click="NewGameButton_Click">
+                    <StackPanel Orientation="Horizontal" 
+                                Spacing="10"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="⚔️" FontSize="24"/>
+                        <TextBlock Text="Новая игра" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Продолжить (если есть сохранение) -->
+                <Button Classes="menu-button"
+                        x:Name="ContinueButton"
+                        Click="ContinueButton_Click"
+                        IsEnabled="False">
+                    <StackPanel Orientation="Horizontal" 
+                                Spacing="10"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="▶️" FontSize="24"/>
+                        <TextBlock Text="Продолжить" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Настройки -->
+                <Button Classes="menu-button"
+                        x:Name="SettingsButton"
+                        Click="SettingsButton_Click">
+                    <StackPanel Orientation="Horizontal" 
+                                Spacing="10"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="⚙️" FontSize="24"/>
+                        <TextBlock Text="Настройки" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Об игре -->
+                <Button Classes="menu-button"
+                        x:Name="AboutButton"
+                        Click="AboutButton_Click">
+                    <StackPanel Orientation="Horizontal" 
+                                Spacing="10"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="ℹ️" FontSize="24"/>
+                        <TextBlock Text="Об игре" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <!-- Выход -->
+                <Button Classes="menu-button"
+                        x:Name="ExitButton"
+                        Click="ExitButton_Click">
+                    <StackPanel Orientation="Horizontal" 
+                                Spacing="10"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="🚪" FontSize="24"/>
+                        <TextBlock Text="Выход" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            
+            <!-- Нижняя часть с версией -->
+            <TextBlock Grid.Row="3"
+                       Text="Версия 1.0.0"
+                       FontSize="12"
+                       Foreground="#404040"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,20"/>
+        </Grid>
+    </Border>
+</nav:Page>

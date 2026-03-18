@@ -582,6 +582,18 @@
         "runtime": {
           "lib/net8.0/Tmds.DBus.Protocol.dll": {}
         }
+      },
+      "WpfLikeAvaloniaNavigation/1.0.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.3.9"
+        },
+        "compile": {
+          "lib/net9.0/WpfLikeAvaloniaNavigation.dll": {}
+        },
+        "runtime": {
+          "lib/net9.0/WpfLikeAvaloniaNavigation.dll": {}
+        }
       }
     }
   },
@@ -1405,6 +1417,20 @@
         "tmds.dbus.protocol.0.21.2.nupkg.sha512",
         "tmds.dbus.protocol.nuspec"
       ]
+    },
+    "WpfLikeAvaloniaNavigation/1.0.2.1": {
+      "sha512": "qcJl6DDCr5fArnACJhuB6cJUj/Ap9XkaSiwEiyCOoiYwqP0ZpLJ2bi/CSdfgif6MifylEDQs5yNxuhMrodeZcQ==",
+      "type": "package",
+      "path": "wpflikeavalonianavigation/1.0.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "lib/net9.0/WpfLikeAvaloniaNavigation.dll",
+        "wpflikeavalonianavigation.1.0.2.1.nupkg.sha512",
+        "wpflikeavalonianavigation.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -1413,7 +1439,8 @@
       "Avalonia.Desktop >= 11.3.11",
       "Avalonia.Diagnostics >= 11.3.11",
       "Avalonia.Fonts.Inter >= 11.3.11",
-      "Avalonia.Themes.Fluent >= 11.3.11"
+      "Avalonia.Themes.Fluent >= 11.3.11",
+      "WpfLikeAvaloniaNavigation >= 1.0.2.1"
     ]
   },
   "packageFolders": {
@@ -1485,6 +1512,10 @@
           "Avalonia.Themes.Fluent": {
             "target": "Package",
             "version": "[11.3.11, )"
+          },
+          "WpfLikeAvaloniaNavigation": {
+            "target": "Package",
+            "version": "[1.0.2.1, )"
           }
         },
         "imports": [

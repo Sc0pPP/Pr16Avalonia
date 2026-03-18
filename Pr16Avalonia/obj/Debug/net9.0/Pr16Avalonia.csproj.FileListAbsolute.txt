@@ -71,3 +71,5 @@ C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\obj\Debug\net9.0\refint\Pr
 C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\obj\Debug\net9.0\Pr16Avalonia.pdb
 C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\obj\Debug\net9.0\Pr16Avalonia.genruntimeconfig.cache
 C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\obj\Debug\net9.0\ref\Pr16Avalonia.dll
+C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\bin\Debug\net9.0\WpfLikeAvaloniaNavigation.dll
+C:\Users\Scop\RiderProjects\Pr16Avalonia\Pr16Avalonia\obj\Debug\net9.0\Pr16Avalonia.sourcelink.json

@@ -12,7 +12,8 @@
           "Avalonia.Desktop": "11.3.11",
           "Avalonia.Diagnostics": "11.3.11",
           "Avalonia.Fonts.Inter": "11.3.11",
-          "Avalonia.Themes.Fluent": "11.3.11"
+          "Avalonia.Themes.Fluent": "11.3.11",
+          "WpfLikeAvaloniaNavigation": "1.0.2.1"
         },
         "runtime": {
           "Pr16Avalonia.dll": {}
@@ -435,6 +436,17 @@
             "fileVersion": "0.21.2.0"
           }
         }
+      },
+      "WpfLikeAvaloniaNavigation/1.0.2.1": {
+        "dependencies": {
+          "Avalonia": "11.3.11"
+        },
+        "runtime": {
+          "lib/net9.0/WpfLikeAvaloniaNavigation.dll": {
+            "assemblyVersion": "1.0.2.1",
+            "fileVersion": "1.0.2.1"
+          }
+        }
       }
     }
   },
@@ -639,6 +651,13 @@
       "sha512": "sha512-ScSMrUrrw8px4kK1Glh0fZv/HQUlg1078bNXNPfRPKQ3WbRzV9HpsydYEOgSoMK5LWICMf2bMwIFH0pGjxjcMA==",
       "path": "tmds.dbus.protocol/0.21.2",
       "hashPath": "tmds.dbus.protocol.0.21.2.nupkg.sha512"
+    },
+    "WpfLikeAvaloniaNavigation/1.0.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qcJl6DDCr5fArnACJhuB6cJUj/Ap9XkaSiwEiyCOoiYwqP0ZpLJ2bi/CSdfgif6MifylEDQs5yNxuhMrodeZcQ==",
+      "path": "wpflikeavalonianavigation/1.0.2.1",
+      "hashPath": "wpflikeavalonianavigation.1.0.2.1.nupkg.sha512"
     }
   }
 }
