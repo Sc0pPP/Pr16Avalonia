@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pr16Avalonia.Pages;
-using WpfLikeAvaloniaNavigation;
 
 namespace _3ISIP323_Zevakin.Новая_папка
 {
@@ -19,11 +17,12 @@ namespace _3ISIP323_Zevakin.Новая_папка
         public static Action<bool> OnEnableNextButton;
         public static Action<string, int, bool> OnShowEquipChoice;
         public static Action OnGameOver;
-        public static Action<string> OnShowImage; // *** НОВОЕ: показать картинку ***
+        public static Action<string> OnShowImage;
+        public static Action OnReturnToMenu;
 
         // Состояние игры
         public static Player CurrentPlayer;
-        public static Enemy CurrentEnemy;
+        public static List<Enemy> CurrentEnemies; // *** ИЗМЕНЕНО: теперь список врагов ***
         public static int CurrentTurn = 1;
         public static bool IsInBattle = false;
         
@@ -47,14 +46,48 @@ namespace _3ISIP323_Zevakin.Новая_папка
             return null;
         }
 
+        // *** НОВЫЙ МЕТОД: Генерация группы врагов ***
+        public static List<Enemy> GenerateEnemyGroup(bool isBoss)
+        {
+            List<Enemy> enemies = new List<Enemy>();
+            
+            if (isBoss)
+            {
+                // Босс всегда один
+                enemies.Add(GenerateRandomEnemy(true));
+            }
+            else
+            {
+                // Шанс встретить группу врагов (30%)
+                int groupChance = rnd.Next(100);
+                
+                if (groupChance < 30) // 30% шанс группы
+                {
+                    int enemyCount = rnd.Next(2, 4); // От 2 до 3 врагов
+                    
+                    for (int i = 0; i < enemyCount; i++)
+                    {
+                        enemies.Add(GenerateRandomEnemy(false));
+                    }
+                    
+                    OnLog?.Invoke($"⚠️ Внимание! Вы встретили группу из {enemyCount} врагов!");
+                }
+                else
+                {
+                    // Обычный одиночный враг
+                    enemies.Add(GenerateRandomEnemy(false));
+                }
+            }
+            
+            return enemies;
+        }
+
         public static void OpenChest(Player player)
         {
             int roll = rnd.Next(3);
             if (roll == 0)
             {
-                // *** Показываем картинку зелья ***
                 OnShowImage?.Invoke("potion");
-                
                 player.Heal();
                 OnLog?.Invoke("🎁 Вы нашли сундук! Получено зелье лечения!");
                 OnStatsUpdate?.Invoke(player.CurrentHP, player.MaxHP, CurrentTurn);
@@ -62,9 +95,7 @@ namespace _3ISIP323_Zevakin.Новая_папка
             }
             else if (roll == 1)
             {
-                // *** Показываем картинку меча ***
                 OnShowImage?.Invoke("sword");
-                
                 int atk = rnd.Next(5, 16);
                 string weaponName = $"Меч +{atk}";
                 OnLog?.Invoke($"⚔️ Вы нашли сундук с оружием!");
@@ -78,9 +109,7 @@ namespace _3ISIP323_Zevakin.Новая_папка
             }
             else
             {
-                // *** Показываем картинку брони ***
                 OnShowImage?.Invoke("armor");
-                
                 int def = rnd.Next(1, 11);
                 string armorName = $"Броня +{def}";
                 OnLog?.Invoke($"🛡️ Вы нашли сундук с броней!");
@@ -127,25 +156,41 @@ namespace _3ISIP323_Zevakin.Новая_папка
             OnEnableNextButton?.Invoke(true);
         }
 
-        public static void StartBattle(Player player, Enemy enemy)
+        // *** ОБНОВЛЕННЫЙ МЕТОД: Начало боя с группой ***
+        public static void StartBattle(Player player, List<Enemy> enemies)
         {
-            CurrentEnemy = enemy;
+            CurrentEnemies = enemies;
             IsInBattle = true;
             
-            // *** Показываем картинку монстра по его имени ***
-            string enemyImage = GetEnemyImageName(enemy.Name);
+            // Показываем картинку первого врага (или можно показывать всех)
+            string enemyImage = GetEnemyImageName(enemies[0].Name);
             OnShowImage?.Invoke(enemyImage);
             
-            OnLog?.Invoke($"\n⚔️ Вы столкнулись с {enemy.Name}!");
-            OnLog?.Invoke($"❤️ HP врага: {enemy.CurrentHP}/{enemy.MaxHP}");
+            if (enemies.Count == 1)
+            {
+                OnLog?.Invoke($"\n⚔️ Вы столкнулись с {enemies[0].Name}!");
+                OnLog?.Invoke($"❤️ HP врага: {enemies[0].CurrentHP}/{enemies[0].MaxHP}");
+            }
+            else
+            {
+                OnLog?.Invoke($"\n⚔️ Вы столкнулись с группой врагов:");
+                foreach (var enemy in enemies)
+                {
+                    OnLog?.Invoke($"   • {enemy.Name} (HP: {enemy.CurrentHP}/{enemy.MaxHP})");
+                }
+                
+                // Считаем общее HP группы
+                int totalHP = enemies.Sum(e => e.CurrentHP);
+                int totalMaxHP = enemies.Sum(e => e.MaxHP);
+                OnLog?.Invoke($"💀 Общее HP группы: {totalHP}/{totalMaxHP}");
+            }
+            
             OnEnableButtons?.Invoke(true);
             OnEnableNextButton?.Invoke(false);
         }
 
-        // *** Определяем какую картинку показать для монстра ***
         private static string GetEnemyImageName(string enemyName)
         {
-            // Можно сделать по-умному, определяя тип монстра
             if (enemyName.Contains("Слизь") || enemyName.Contains("слизь"))
                 return "slime";
             else if (enemyName.Contains("Гоблин") || enemyName.Contains("гоблин"))
@@ -159,21 +204,41 @@ namespace _3ISIP323_Zevakin.Новая_папка
             else if (enemyName.Contains("Босс") || enemyName.Contains("босс"))
                 return "boss";
             else
-                return "monster"; // картинка по умолчанию
+                return "monster";
         }
 
+        // *** ОБНОВЛЕННЫЙ МЕТОД: Атака группы врагов ***
         public static void PlayerAttack()
         {
-            if (!IsInBattle || CurrentEnemy == null || CurrentPlayer == null)
+            if (!IsInBattle || CurrentEnemies == null || CurrentEnemies.Count == 0 || CurrentPlayer == null)
                 return;
 
             if (!CurrentPlayer.IsFrozen)
             {
-                int dmg = CurrentPlayer.Attack - CurrentEnemy.Defense;
-                if (dmg < 1) dmg = 1;
-                CurrentEnemy.CurrentHP -= dmg;
-                OnLog?.Invoke($"⚔️ Вы нанесли {dmg} урона {CurrentEnemy.Name}!");
-                OnLog?.Invoke($"❤️ HP врага: {CurrentEnemy.CurrentHP}/{CurrentEnemy.MaxHP}");
+                // Атакуем ВСЕХ живых врагов
+                int totalDamage = 0;
+                
+                foreach (var enemy in CurrentEnemies.Where(e => e.IsAlive()))
+                {
+                    int dmg = CurrentPlayer.Attack - enemy.Defense;
+                    if (dmg < 1) dmg = 1;
+                    
+                    enemy.CurrentHP -= dmg;
+                    totalDamage += dmg;
+                    
+                    OnLog?.Invoke($"⚔️ Вы нанесли {dmg} урона {enemy.Name}!");
+                    
+                    if (!enemy.IsAlive())
+                    {
+                        OnLog?.Invoke($"💀 {enemy.Name} повержен!");
+                    }
+                    else
+                    {
+                        OnLog?.Invoke($"   HP {enemy.Name}: {enemy.CurrentHP}/{enemy.MaxHP}");
+                    }
+                }
+                
+                OnLog?.Invoke($"💥 Всего нанесено урона: {totalDamage}");
             }
             else
             {
@@ -186,7 +251,7 @@ namespace _3ISIP323_Zevakin.Новая_папка
 
         public static void PlayerDefend()
         {
-            if (!IsInBattle || CurrentEnemy == null || CurrentPlayer == null)
+            if (!IsInBattle || CurrentEnemies == null || CurrentEnemies.Count == 0 || CurrentPlayer == null)
                 return;
 
             if (!CurrentPlayer.IsFrozen)
@@ -210,42 +275,81 @@ namespace _3ISIP323_Zevakin.Новая_папка
             EnemyTurn();
         }
 
+        // *** ОБНОВЛЕННЫЙ МЕТОД: Ход группы врагов ***
         private static void EnemyTurn()
         {
-            if (CurrentEnemy.IsAlive())
+            if (CurrentEnemies == null || CurrentEnemies.Count == 0)
+                return;
+            
+            // Каждый живой враг атакует с уроном 30% от своей атаки
+            var aliveEnemies = CurrentEnemies.Where(e => e.IsAlive()).ToList();
+            
+            if (aliveEnemies.Count > 0)
             {
-                CurrentEnemy.AttackPlayer(CurrentPlayer, rnd);
+                OnLog?.Invoke("\n🔴 Ход врагов:");
+                
+                foreach (var enemy in aliveEnemies)
+                {
+                    // Враг наносит 30% от своего урона
+                    int originalAttack = enemy.Attack;
+                    enemy.Attack = (int)(originalAttack * 0.3);
+                    
+                    if (enemy.Attack < 1) enemy.Attack = 1;
+                    
+                    enemy.AttackPlayer(CurrentPlayer, rnd);
+                    
+                    // Восстанавливаем оригинальную атаку
+                    enemy.Attack = originalAttack;
+                }
+                
                 OnStatsUpdate?.Invoke(CurrentPlayer.CurrentHP, CurrentPlayer.MaxHP, CurrentTurn);
             }
 
             CheckBattleEnd();
         }
 
+        // *** ОБНОВЛЕННЫЙ МЕТОД: Проверка конца боя ***
         private static void CheckBattleEnd()
         {
             if (!CurrentPlayer.IsAlive())
             {
-                // *** Показываем картинку смерти ***
                 OnShowImage?.Invoke("death");
-                
                 OnLog?.Invoke("💀 Вы были побеждены...");
+                OnLog?.Invoke($"Вы прошли {CurrentTurn} этажей.");
                 IsInBattle = false;
                 OnEnableButtons?.Invoke(false);
                 OnEnableNextButton?.Invoke(false);
                 OnGameOver?.Invoke();
                 
+                // Возврат в меню через 3 секунды
+                System.Threading.Tasks.Task.Delay(3000).ContinueWith(_ => 
+                {
+                    OnReturnToMenu?.Invoke();
+                });
+                
                 return;
             }
 
-            if (!CurrentEnemy.IsAlive())
+            // Проверяем живы ли враги
+            bool allEnemiesDead = CurrentEnemies.All(e => !e.IsAlive());
+            
+            if (allEnemiesDead)
             {
-                // *** Показываем картинку победы ***
                 OnShowImage?.Invoke("victory");
                 
-                OnLog?.Invoke($"✅ Вы победили {CurrentEnemy.Name}!");
+                if (CurrentEnemies.Count == 1)
+                {
+                    OnLog?.Invoke($"✅ Вы победили {CurrentEnemies[0].Name}!");
+                }
+                else
+                {
+                    OnLog?.Invoke($"✅ Вы победили всю группу врагов!");
+                    OnLog?.Invoke($"   Повержено: {CurrentEnemies.Count} врагов");
+                }
+                
                 IsInBattle = false;
                 OnEnableButtons?.Invoke(false);
-                CurrentEnemy = null;
+                CurrentEnemies = null;
                 OnEnableNextButton?.Invoke(true);
             }
         }
@@ -263,14 +367,14 @@ namespace _3ISIP323_Zevakin.Новая_папка
 
             if (chestEvent && !isBossTurn)
             {
-                // *** Показываем картинку сундука ***
                 OnShowImage?.Invoke("chest");
                 OpenChest(CurrentPlayer);
             }
             else
             {
-                Enemy enemy = GenerateRandomEnemy(isBossTurn);
-                StartBattle(CurrentPlayer, enemy);
+                // *** ГЕНЕРИРУЕМ ГРУППУ ВРАГОВ ***
+                List<Enemy> enemies = GenerateEnemyGroup(isBossTurn);
+                StartBattle(CurrentPlayer, enemies);
             }
         }
 
@@ -279,11 +383,9 @@ namespace _3ISIP323_Zevakin.Новая_папка
             CurrentPlayer = new Player("Герой", 100, 10, 5);
             CurrentTurn = 1;
             IsInBattle = false;
-            CurrentEnemy = null;
+            CurrentEnemies = null;
 
-            // *** Показываем картинку начала игры ***
             OnShowImage?.Invoke("start");
-
             OnLog?.Invoke("🏰 Добро пожаловать в подземелье!");
             OnStatsUpdate?.Invoke(CurrentPlayer.CurrentHP, CurrentPlayer.MaxHP, CurrentTurn);
             OnEnableNextButton?.Invoke(true);
